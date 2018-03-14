@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>  
+    <meta charset="utf-8">
+    <title>Masisa - CTHA</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+
+    <link rel="stylesheet" href="dist/css/skins/skin-blue.min.css">
+    <!--mathjax-->
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+    <script type="text/javascript" src="http://canvg.github.io/canvg/canvg.js"></script> 
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="Leaflet.MousePosition-master/src/L.Control.MousePosition.css">
+    <link rel="stylesheet" href="dist/css/Control.FullScreen.css" />
+
+    <style>
+        #map { 
+            width: 100%;
+            height: 580px;
+            box-shadow: 5px 5px 5px #888;
+        } 
+        .leaflet-grab {
+            cursor: auto;
+        }
+        a.disabled {
+            pointer-events: none;
+            cursor: default;
+        }
+    </style>
+
+</head>
+<body class="hold-transition skin-blue layout-top-nav">
+    <div class="wrapper">
+        <header class="main-header">
+            <nav class="navbar navbar-static-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <a href="index.html" class="navbar-brand"> <i class="fa fa-tree"></i><b>Sistema MASISA</b></a> 
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                    </div>                   
+                    <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li class="active"><a href="#">Inicio <span class="sr-only">(current)</span></a></li>
+                            <li><a href="acerca-del-sitio.html">Acerca de</a></li>                                      
+                        </ul>          
+                    </div>
+                    <!-- /.navbar-collapse --> 
+                </div>
+                <!-- /.container-fluid -->
+            </nav>
+        </header>
+        <!-- Full Width Column -->
+        <div class="content-wrapper">
+            <div class="container">
+                <!-- Main content -->
+                <section class="content">       
+                    <div  class="row">
+                        <div  class="col-md-8 ">
+                            <div class="panel panel-info">
+                                <div class="panel-body ">
+                                    <div id="fullscreen" class="fullscreen">
+                                        <div id="map">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div> 
+                        <div class="col-md-4 ">
+                            <div class="nav-tabs-custom row">            
+                                <ul class="nav nav-tabs pull-right">
+                                    <li><a href="#tab4" class="disabled" >Paso 4</a></li>
+                                    <li><a href="#tab3" class="disabled" >Paso 3</a></li>
+                                    <li><a href="#tab2" class="disabled" >Paso 2</a></li>
+                                    <li  class="active"><a href="#tab1" class="disabled" >Paso 1</a></li>                    
+                                </ul>
+                                <div class="tab-content" >
+                                    <div class="tab-pane " id="tab4">
+                                        <form autocomplete="off">   
+                                            <div style="display: none;" > $$$$</div>                
+                                            <h4 class="text-light-blue">Determinar Altura de obra</h4>  
+                                            <label>Coeficiente Rugosidad en conductos</label>
+                                            <br>
+                                            <p>Seleccione:</p>
+                                            <div class="form-group">
+                                                <div class="radio">
+                                                    <label>
+                                                        <input type="radio" name="optionsRadiosDos" id="optionsRadios3" value="option3" >
+                                                        Valor obtenido de Tabla.
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" name="optionsRadiosDos" id="optionsRadios4" value="option4" >
+                                                        Valor ingresado manualmente.
+                                                    </label>
+                                                </div>                   
+                                            </div>  
+                                            <div style="display: none;" id="valorTabla2Div">      
+                                                <label>Tipo valor:</label>
+                                                <div class="form-group has-error" id="selectRugosidadValorDiv">
+                                                    <select id='selectRugosidadValor'  onchange='cargarSelect2();' class="form-control">
+                                                        <option value='0'>Selecciona una opción</option>
+                                                        <option value='minimo'>Mínimo</option>
+                                                        <option value='normal'>Normal </option>
+                                                        <option value='maximo'>Máximo</option>                          
+                                                    </select>
+                                                </div>
+                                                <label>Tipo de Material:</label>
+                                                <div class="form-group has-error" id="selectRugosidad1Div">
+                                                    <select id='selectRugosidad1' onchange='cargarSelect2();' class="form-control">             
+                                                    </select>
+                                                </div>
+                                                <label>Tipo de Canal:</label>
+                                                <div class="form-group has-error" id="selectRugosidad2Div">
+                                                    <select id='selectRugosidad2'  disabled onchange='cargarRugosidad(this.value)' class="form-control">
+                                                        <option value='0'>Selecciona una opción</option>
+                                                    </select>
+                                                </div>
+                                            </div>                          
+                                            <div style="display: none;" id="valorManual2Div">
+                                                <label>Coeficiente:</label>
+                                                <div class="form-group has-error" id="coeficienteRugosidadDiv">
+                                                    <input id="coeficienteRugosidad" type="text" class="form-control" placeholder="Coeficiente" onkeypress="return validaInput(event)">
+                                                </div>   
+                                            </div>  
+                                            <hr>                        
+                                            <label>Pendiente de Conducto:</label>
+                                            <div class="input-group has-error" id="pendienteConductoDiv">
+                                                <input type="text" class="form-control" id="pendienteConducto" placeholder="Porcentaje pendiente" onkeypress="return validaInput(event)">
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                            <br>
+                                            <div id="infoRugosidad">    
+                                                <div class="callout callout-info" >
+                                                    <h4><i class="icon fa fa-info"></i> &nbsp; Completar los campos  para calcular la altura de Obra. </h4>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="box-footer">
+                                                <button type="button" class="btn btn-default" onclick="activaTab(3)">Atras</button>               
+                                                <button type="reset" disabled id="btnDescargar" class="btn  btn-primary  pull-right"  onclick="crearPdf()" >Descargar Informe</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="tab-pane " id="tab3">
+                                        <form autocomplete="off">   
+                                            <label>Coeficiente de Escorrentía</label>
+                                            <br>    
+                                            <p>Seleccione:</p>                           
+                                            <div class="form-group">
+                                                <div class="radio">
+                                                    <label>
+                                                        <input type="radio" name="optionsRadiosUno" id="optionsRadios1" value="option1" >
+                                                        Valor obtenido de Tabla.
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" name="optionsRadiosUno" id="optionsRadios2" value="option2" >
+                                                        Valor ingresado manualmente.
+                                                    </label>
+                                                </div>                   
+                                            </div>   
+                                            <div style="display: none;" id="valorTablaDiv">                                     
+                                                <label>Tipo de superficie:</label>
+                                                <div class="form-group has-error" id="selectEscorrentia1Div">
+                                                    <select id='selectEscorrentia1' disabled onchange='cargarSelect1(this.value);' class="form-control">
+                                                    </select>
+                                                </div>
+                                                <label>Tipo Pendidente:</label>
+                                                <div class="form-group has-error" id="selectEscorrentia2Div">
+                                                    <select id='selectEscorrentia2' disabled  onchange="cargarEscorrentia(this.value)"  class="form-control">
+                                                        <option value='0'>Selecciona una opción</option>                                 
+                                                    </select>
+                                                </div>
+                                                <hr>
+                                            </div>
+                                            <div style="display: none;" id="valorManualDiv">
+                                                <label>Coeficiente:</label>
+                                                <div class="form-group has-error" id="coeficienteEscorrentiaDiv">
+                                                <input id="coeficienteEscorrentia" type="text" class="form-control" placeholder="Coeficiente" onkeypress="return validaInput(event)">
+                                                </div>   
+                                            </div>
+                                            <br>
+                                            <div id="infoCaudal2">    
+                                                <div class="callout callout-info" >
+                                                    <h4><i class="icon fa fa-info"></i> &nbsp; Completar Todos los campos  para calcular el caudal. </h4>
+                                                </div>
+                                            </div>                                                                               
+                                            <div class="box-footer">
+                                                <button type="button" class="btn btn-default" onclick="activaTab(2)">Atras</button>
+                                                <button type="button" id="btnTab2_1" class="btn  btn-primary  pull-right" disabled onclick="activaTab(4)">Siguiente</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                    <div class="tab-pane" id="tab2">
+                                        <form autocomplete="off">
+                                            <h4 class="text-light-blue">Determinar Caudal</h4 >
+                                                <label>Intensidad de Precipitación</label>
+                                                <br>                                            
+                                                <label>Superficie cuenca:</label>
+                                                <div class="input-group has-error" id="superficieCuencaDiv">
+                                                    <input type="text" class="form-control" id="superficieCuenca" placeholder="Área cuenca" onkeypress="return validaInput(event)">
+                                                    <span class="input-group-addon">m²</span>
+                                                </div>
+                                                <label>Duración de intensidad:</label>                               
+                                                <div class="input-group has-error" id="DuracionIDFDiv">
+                                                    <input type="text" class="form-control" id="DuracionIDF" placeholder="Tiempo" onkeypress="return validaInput(event)">
+                                                    <span class="input-group-addon">minutos</span>
+                                                </div>
+                                                <span id="spanDuracion" style="display: none;"  class="help-block">Advertencia Tiempo menor a 15 minutos</span>  
+
+                                                <label>Periodo de retorno:</label>
+                                                <div class="form-group has-error" id="selectRetornoDiv">
+                                                    <select id='selectRetorno' onchange="cargarAño(this.value)" class="form-control">
+                                                        <option value='0'>Selecciona una opción</option>
+                                                        <option value="retorno_2">2 Años</option>
+                                                        <option value="retorno_5">5 Años</option>
+                                                        <option value="retorno_10">10 Años</option>
+                                                        <option value="retorno_25">25 Años</option>
+                                                        <option value="retorno_50">50 Años</option>
+                                                        <option value="retorno_100">100 Años</option>
+                                                        <option value="retorno_500">500 Años</option>   
+                                                    </select> 
+                                                </div>                          
+                                                <br>   
+                                                <div id="infoCaudal">    
+                                                    <div class="callout callout-info" >
+                                                        <h4><i class="icon fa fa-info"></i> &nbsp; Completar Todos los campos  para calcular el caudal. </h4>
+                                                    </div>
+                                                </div>                                                                               
+                                                <div class="box-footer">
+                                                    <button type="button" class="btn btn-default" onclick="activaTab(1)">Atras</button>
+                                                    <button type="button" id="btnTab2" class="btn  btn-primary  pull-right" disabled onclick="activaTab(3)">Siguiente</button>
+                                                </div>
+                                            </form>
+                                        </div>                          
+                                        <!-- /.tab-pane -->
+                                        <div class="tab-pane active" id="tab1">
+                                            <div id="predio">
+                                                <div class='callout callout-info' > 
+                                                    <h4><i class="icon fa fa-info"></i> &nbsp; Seleccione un predio en el mapa donde pretenda construir la obra.</h4>
+                                                </div>   
+                                            </div> 
+                                        </div>
+                                        <!-- /.tab-pane -->
+                                    </div>      
+                                </div> 
+                            </div>   
+                        </div> 
+                    
+                </section>
+                <!-- /.content -->
+            </div>  
+            <!-- /.container -->
+        </div>
+        <!-- /.content-wrapper -->
+        <footer class="main-footer">
+            <div class="container">
+                <div class="pull-right hidden-xs">
+                    <b>Version</b> 0.1
+                </div>
+                <strong>Copyright &copy; 2017 <a href="http://masisa.ctha.cl">masisa.ctha</a>.</strong> All rights
+                reserved.
+            </div>
+            <!-- /.container -->
+        </footer>
+    </div>
+    <!-- ./wrapper -->
+
+    <!-- jQuery 2.2.3 -->
+    <script src="plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <!-- Bootstrap 3.3.6 -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="dist/js/app.min.js"></script>
+    <!-- SlimScroll -->
+    <script src="plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <!-- FastClick -->
+    <script src="plugins/fastclick/fastclick.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="dist/js/demo.js"></script>
+    <!--Leaflet js-->
+    <script src="Leaflet.MousePosition-master/src/L.Control.MousePosition.js"></script>
+    <script src="dist/js/L.TileLayer.BetterWMS.js"></script>
+    <script src="dist/js/Control.FullScreen.js"></script>
+    <!-- jsPDF-->
+    <script src="dist/js/jspdf.debug.js"></script>
+    <!-- html2canvas-->
+    <script src="dist/js/html2canvas.min.js"></script>
+    <!-- crearPdf-->
+    <script src="dist/js/crearPdf.js"></script>
+    <!-- map Leatflet-->
+    <script src="dist/js/mapLeaflet.js"></script>
+    <!-- validaciones y carga de datos-->
+    <script src="dist/js/validate.js"></script>
+</body>
+</html>
